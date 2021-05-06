@@ -3,39 +3,50 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Graph {
-
-    int target;
+    //class data members
     List<List<Integer>> pathResult;
-
-    public int[][] listToArr(List<List<Integer>> list) {
-        int[][] arr;
-        arr = list.stream().map(  u  ->  u.stream().mapToInt(i->i).toArray()  ).toArray(int[][]::new);
-        return arr;
-
-    }
-
-
-
+    int target;
+    /**
+     * function that calculates all possible paths from position 0 to position N-1
+     * uses linked list to check possible paths
+     * @param graph 2 dimensional data structure in DAG format
+     * @return result 2 dimensional int array containing all possible paths to target
+     */
     public int[][] allPaths(int[][] graph) {
         target = graph.length-1;
-        this.pathResult = new ArrayList<List<Integer>>();
+        pathResult = new ArrayList<List<Integer>>();
         LinkedList<Integer> tempPath = new LinkedList<Integer>();
         tempPath.addLast(0);
-        this.goBack(0, tempPath, graph);
+        checkPath(0, tempPath, graph);
         int[][] result = listToArr(pathResult);
         return result;
     }
-
-    public void goBack(int cur, LinkedList<Integer> tempPath, int[][]graph) {
+    /**
+     * helper function that main function calls to recusively check paths
+     * @param cur current position in graph
+     * @param tempPath partially constructed path
+     * @param graph 2 dimensional data structure in DAG format
+     */
+    public void checkPath(int cur, LinkedList<Integer> tempPath, int[][]graph) {
         if (cur == target) {
             pathResult.add(new ArrayList<Integer>(tempPath));
             return;
         }
         for (int next : graph[cur]) {
             tempPath.addLast(next);
-            goBack(next, tempPath, graph);
+            checkPath(next, tempPath, graph);
             tempPath.removeLast();
         }
+    }
+    /**
+     * function that takes a 2 dimensional list and returns it as an int array
+     * @param list 2 dimensional list containing all possible paths to target
+     * @return arr 2 dimensional int array containing all possible paths to target
+     */
+    public int[][] listToArr(List<List<Integer>> list) {
+        int[][] arr;
+        arr = list.stream().map(  u  ->  u.stream().mapToInt(i->i).toArray()  ).toArray(int[][]::new);
+        return arr;
     }
 
     @Override
@@ -46,6 +57,7 @@ public class Graph {
     }
 
     public static void main(String[] args) {
+        //test cases
         int[][] graph1 = {{1,2}, {3}, {3}, {}};
         int[][] graph2 = {{1}, {}};
         int[][] graph3 = {{4,3,1}, {3,2,4}, {3}, {4}, {}};
